@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing Channel ROI · Cleango</title>
+<style>
+  :root{
+    --green:#86D080; --green-dk:#1f5e16; --green-tint:#EAF3DE;
+    --wheat:#F4D5B5; --wheat-dk:#7a4a10; --wheat-tint:#FBEEDD;
+    --jet:#343434; --muted:#6f6f6a; --hint:#9a9a93;
+    --alabaster:#F6EFE8; --snow:#FBF9F7; --white:#ffffff;
+    --line:#e7e1d8; --red:#C0492F; --red-tint:#FAECE7; --blue:#185FA5;
+    --radius:14px; --radius-sm:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--snow);color:var(--jet);line-height:1.5;-webkit-font-smoothing:antialiased;padding:22px;}
+  .wrap{max-width:1040px;margin:0 auto;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;}
+  .brand{display:flex;align-items:center;gap:11px;}
+  .logo{width:38px;height:38px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--green-dk);}
+  .brand h1{font-size:19px;font-weight:600;}
+  .brand .sub{font-size:12.5px;color:var(--muted);}
+  .modes{display:flex;background:var(--alabaster);border-radius:30px;padding:4px;gap:2px;}
+  .modes button{border:none;background:transparent;font-size:13.5px;font-weight:600;color:var(--muted);
+    padding:7px 16px;border-radius:30px;cursor:pointer;font-family:inherit;}
+  .modes button.on{background:var(--white);color:var(--jet);box-shadow:0 1px 3px rgba(0,0,0,.07);}
+
+  .chips{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .chip{font-size:13px;padding:7px 15px;border-radius:22px;border:1px solid var(--line);background:var(--white);
+    color:var(--muted);cursor:pointer;font-family:inherit;font-weight:600;}
+  .chip.on{background:var(--green);border-color:var(--green);color:var(--green-dk);}
+  .chip.add{border-style:dashed;color:var(--muted);font-weight:500;}
+  .vseg{display:inline-flex;background:var(--alabaster);border-radius:20px;padding:3px;gap:2px;}
+  .vseg button{border:none;background:transparent;font-size:12px;font-weight:600;color:var(--muted);padding:5px 13px;border-radius:18px;cursor:pointer;font-family:inherit;}
+  .vseg button.on{background:var(--white);color:var(--jet);}
+  .qsel{font-family:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--white);color:var(--jet);}
+
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;}
+  .sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+  .sec-h h2{font-size:15px;font-weight:600;}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:4px 12px;border-radius:20px;}
+  .badge.good{background:var(--green-tint);color:var(--green-dk);}
+  .badge.bad{background:var(--red-tint);color:var(--red);}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;}
+  .kpi{background:var(--alabaster);border-radius:var(--radius-sm);padding:13px 15px;}
+  .kpi .l{font-size:12px;color:var(--muted);margin-bottom:3px;}
+  .kpi .v{font-size:23px;font-weight:600;letter-spacing:-.3px;}
+  .v.pos{color:var(--green-dk);} .v.neg{color:var(--red);}
+
+  .funnel{display:flex;align-items:stretch;gap:7px;}
+  .fstep{flex:1;border-radius:var(--radius-sm);padding:13px 6px;text-align:center;background:var(--alabaster);}
+  .fstep .l{font-size:12px;color:var(--muted);} .fstep .n{font-size:26px;font-weight:600;margin-top:2px;}
+  .fstep.won{background:var(--wheat);} .fstep.won .l{color:var(--wheat-dk);} .fstep.won .n{color:var(--wheat-dk);}
+  .fstep.svc{background:var(--green);} .fstep.svc .l{color:var(--green-dk);} .fstep.svc .n{color:var(--green-dk);}
+  .farrow{display:flex;align-items:center;color:var(--hint);font-size:18px;}
+
+  .cols{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;}
+  .colsep{border-left:1px solid var(--line);padding-left:28px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{font-size:11.5px;color:var(--muted);font-weight:600;text-align:right;padding:6px 4px;}
+  th.l,td.l{text-align:left;}
+  td{padding:7px 4px;text-align:right;border-top:1px solid var(--line);}
+  tr:first-child td{border-top:none;}
+  .minput{width:100%;text-align:right;border:none;border-radius:6px;padding:7px 4px;
+    font-family:inherit;font-size:13px;color:var(--jet);background:transparent;}
+  .minput:hover{background:var(--snow);}
+  .minput:focus{outline:none;background:var(--alabaster);}
+  .anrow td{color:var(--muted);} .anrow td:last-child{color:var(--jet);font-weight:600;}
+
+  .pill{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;}
+  .pill.svc{background:var(--green);color:var(--green-dk);}
+  .pill.won{background:var(--wheat);color:var(--wheat-dk);}
+  .pill.chn{background:var(--alabaster);color:var(--muted);}
+  .dealname{color:var(--blue);font-weight:500;}
+  .xbtn{border:none;background:transparent;color:var(--hint);cursor:pointer;font-size:15px;padding:2px 4px;}
+  .xbtn:hover{color:var(--red);}
+  .ltlink{cursor:pointer;border-bottom:1px dotted var(--hint);}
+  .ltlink:hover{color:var(--green-dk);border-bottom-color:var(--green-dk);}
+  .ltcard{background:var(--alabaster);border-radius:10px;padding:13px 15px;margin:2px 0 9px;font-size:12.5px;text-align:left;line-height:1.55;}
+  .ltbreak{width:100%;font-size:12.5px;} .ltbreak td{border-top:none;padding:3px 0;}
+
+  .btn{font-size:13px;font-weight:600;padding:7px 14px;border-radius:9px;border:none;cursor:pointer;font-family:inherit;
+    background:var(--green);color:var(--green-dk);display:inline-flex;align-items:center;gap:5px;}
+  .btn.ghost{background:var(--white);border:1px solid var(--line);color:var(--muted);}
+  .btn.sm{padding:5px 11px;font-size:12.5px;}
+
+  .form{display:none;background:var(--alabaster);border-radius:var(--radius-sm);padding:14px;margin-top:12px;}
+  .form.show{display:block;}
+  .fgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:11px;}
+  .fld{display:flex;flex-direction:column;gap:4px;}
+  .fld label{font-size:11.5px;color:var(--muted);font-weight:600;}
+  .fld input{border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit;font-size:13px;color:var(--jet);background:var(--white);}
+  .fld input:focus{outline:none;border-color:var(--green);}
+  .formact{display:flex;gap:8px;}
+
+  /* present mode */
+  .pres-head{text-align:center;margin-bottom:20px;}
+  .pres-head .eyebrow{font-size:12px;color:var(--muted);letter-spacing:.07em;font-weight:600;}
+  .pres-head .verdict{font-size:27px;font-weight:600;margin-top:5px;}
+  .money{display:flex;align-items:stretch;gap:0;margin-bottom:26px;}
+  .mbox{flex:1;text-align:center;padding:18px 8px;}
+  .mbox .l{font-size:13px;} .mbox .big{font-size:30px;font-weight:600;letter-spacing:-.5px;} .mbox .s{font-size:12px;}
+  .mbox.spend{background:var(--red-tint);border-radius:var(--radius) 0 0 var(--radius);}
+  .mbox.spend .l,.mbox.spend .s{color:var(--red);} .mbox.spend .big{color:var(--red);}
+  .mbox.earn{background:var(--alabaster);} .mbox.earn .l,.mbox.earn .s{color:var(--muted);}
+  .mbox.net{background:var(--green);border-radius:0 var(--radius) var(--radius) 0;}
+  .mbox.net .l,.mbox.net .s{color:var(--green-dk);} .mbox.net .big{color:var(--green-dk);}
+  .mop{display:flex;align-items:center;padding:0 8px;color:var(--hint);font-size:22px;}
+  .bars{display:flex;align-items:flex-end;justify-content:center;gap:9px;height:130px;margin-bottom:8px;}
+  .barwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .barwrap .n{font-size:20px;font-weight:600;margin-bottom:3px;}
+  .bar{width:100%;border-radius:8px 8px 0 0;background:var(--alabaster);}
+  .bar.won{background:var(--wheat);} .bar.svc{background:var(--green);}
+  .blabels{display:flex;justify-content:center;gap:9px;font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px;}
+  .blabels>div{flex:1;} .blabels .sub2{color:var(--hint);font-size:11px;}
+  .takeaway{text-align:center;font-size:14.5px;background:var(--alabaster);border-radius:var(--radius);padding:15px 18px;}
+  .pres-chip{display:inline-flex;align-items:center;gap:6px;margin-top:9px;font-size:13.5px;padding:6px 15px;border-radius:24px;background:var(--green-tint);color:var(--green-dk);font-weight:600;}
+
+  .foot{text-align:center;font-size:11.5px;color:var(--hint);margin-top:8px;}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr);}.cols{grid-template-columns:1fr;}.colsep{border-left:none;padding-left:0;}.fgrid{grid-template-columns:repeat(2,1fr);}.money{flex-direction:column;}.mbox.spend{border-radius:var(--radius) var(--radius) 0 0;}.mbox.net{border-radius:0 0 var(--radius) var(--radius);}.mop{justify-content:center;padding:6px 0;}}
+</style>
+</head>
+<body>
+<div id="gate" style="position:fixed;inset:0;background:#FBF9F7;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;text-align:center">
+  <div style="width:46px;height:46px;border-radius:12px;background:#86D080;display:flex;align-items:center;justify-content:center;font-size:24px;color:#173404">◧</div>
+  <div style="font-size:19px;font-weight:600;color:#343434">Marketing channel ROI</div>
+  <div style="font-size:13px;color:#6f6f6a">Enter passcode to continue</div>
+  <input id="gateInput" type="password" placeholder="Passcode" autofocus
+    style="border:1px solid #e7e1d8;border-radius:9px;padding:10px 12px;font-size:14px;width:220px;text-align:center;outline:none;color:#343434"
+    onkeydown="if(event.key==='Enter')tryGate()">
+  <button onclick="tryGate()" style="background:#86D080;color:#173404;font-weight:600;border:none;border-radius:9px;padding:9px 22px;font-size:14px;cursor:pointer">Unlock</button>
+  <div id="gateErr" style="color:#C0492F;font-size:12px;height:14px"></div>
+</div>
+<script>
+  const GATECODE='cleango2026';
+  function tryGate(){var v=document.getElementById('gateInput').value;if(v===GATECODE){localStorage.setItem('cleango_mroi_unlocked','1');document.getElementById('gate').style.display='none';}else{document.getElementById('gateErr').textContent='Wrong passcode — try again';document.getElementById('gateInput').value='';}}
+  if(localStorage.getItem('cleango_mroi_unlocked')==='1'){document.getElementById('gate').style.display='none';}
+</script>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">◧</div>
+      <div>
+        <h1>Marketing channel ROI</h1>
+        <div class="sub" id="brandSub">Cohesive · Q1 2026</div>
+      </div>
+    </div>
+    <div class="modes">
+      <button id="mWork" class="on" onclick="setMode('work')">Work</button>
+      <button id="mPres" onclick="setMode('present')">Present</button>
+      <button id="mSum" onclick="setMode('summary')">Summary</button>
+    </div>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div id="workView"></div>
+  <div id="presView" style="display:none;"></div>
+  <div id="summaryView" style="display:none;"></div>
+
+</div>
+
+<style>
+  #mnote-tab{position:fixed;bottom:120px;right:-1px;z-index:801;background:#fffbcc;border:1px solid #d4c840;border-right:none;border-radius:10px 0 0 10px;padding:11px 10px 11px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:-3px 2px 10px rgba(100,80,0,.12);transition:padding .15s,background .15s;font-family:inherit;}
+  #mnote-tab:hover{background:#f5ee80;padding-right:14px;}
+  #mnote-tab .ic{font-size:16px;line-height:1;}
+  #mnote-tab .lbl{font-size:8px;font-weight:700;color:#8a6800;writing-mode:vertical-rl;letter-spacing:.1em;line-height:1;}
+  #mnote-panel{position:fixed;bottom:24px;right:24px;width:300px;background:#fffde8;border:1px solid #d4c840;border-radius:14px;box-shadow:0 8px 32px rgba(100,80,0,.16),0 2px 8px rgba(100,80,0,.08);z-index:800;display:none;flex-direction:column;overflow:hidden;transform:translateY(14px) scale(.97);opacity:0;transition:transform .22s cubic-bezier(.22,.68,0,1.25),opacity .18s ease;max-height:460px;}
+  #mnote-panel.open{display:flex;transform:translateY(0) scale(1);opacity:1;}
+  .mnote-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 11px;background:#fffbcc;border-bottom:1px solid #e8dc80;border-radius:14px 14px 0 0;}
+  .mnote-title{font-size:15px;font-weight:600;color:#5a4a00;display:flex;align-items:center;gap:7px;}
+  .mnote-close{background:none;border:none;cursor:pointer;color:#a09040;font-size:15px;padding:2px 6px;border-radius:4px;line-height:1;}
+  .mnote-close:hover{background:#f0e060;}
+  .mnote-area{flex:1;margin:12px 14px 4px;font-family:inherit;font-size:13px;color:#4a3a00;line-height:1.6;border:1px solid #d4c840;border-radius:8px;padding:11px 12px;background:#fffef5;outline:none;min-height:170px;resize:none;}
+  .mnote-area:focus{border-color:#a09020;}
+  .mnote-area::placeholder{color:#bba94e;}
+  .mnote-foot{font-size:10px;color:#a09040;padding:0 16px 12px;text-align:right;}
+</style>
+
+<button id="mnote-tab" onclick="toggleNotes()" title="My notes">
+  <span class="ic">📝</span>
+  <span class="lbl">NOTES</span>
+</button>
+<div id="mnote-panel">
+  <div class="mnote-head">
+    <div class="mnote-title">📝 My notes</div>
+    <button class="mnote-close" onclick="toggleNotes()" title="Close">✕</button>
+  </div>
+  <textarea class="mnote-area" id="mnote-area" placeholder="Jot anything — reminders, follow-ups, questions for Rose…" oninput="saveNotes()"></textarea>
+  <div class="mnote-foot" id="mnote-saved">Saved automatically</div>
+</div>
+
+<script>
+const LS='cleango_mroi_v1';
+const today=new Date();
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const fmt=n=>{n=Number(n)||0;const s=Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return n<0?'($'+s+')':'$'+s;};
+
+function seed(){
+  return {active:0, channels:[
+    {name:'Cohesive', period:'Q1 2026',
+     months:[
+       {month:'January',spend:740,leads:3,qualified:3,won:1},
+       {month:'February',spend:0,leads:1,qualified:1,won:0},
+       {month:'March',spend:0,leads:1,qualified:1,won:2},
+     ],
+     deals:[
+       {name:'Isalis',revenue:1067,vpay:850,mgp:400,create:'2026-01-15',start:'2026-02-03',end:''},
+       {name:'African Services',revenue:930,vpay:680,mgp:250,create:'2026-01-07',start:'2026-03-09',end:''},
+       {name:'Franck MD',revenue:620,vpay:400,mgp:220,create:'2026-03-11',start:'2026-03-20',end:''},
+       {name:'Newco',revenue:500,vpay:320,mgp:180,create:'2026-03-25',start:'',end:''},
+     ]},
+    {name:'Bark', period:'Q1 2026', months:[{month:'January',spend:0,leads:0,qualified:0,won:0}], deals:[]},
+    {name:'Referral', period:'Q1 2026', months:[{month:'January',spend:0,leads:0,qualified:0,won:0}], deals:[]},
+  ]};
+}
+let state=load();
+function load(){try{const s=JSON.parse(localStorage.getItem(LS));return s&&s.channels?s:seed();}catch(e){return seed();}}
+function save(){localStorage.setItem(LS,JSON.stringify(state));}
+let undoStack=loadUndo();
+function loadUndo(){try{return JSON.parse(localStorage.getItem(LS+'_undo'))||[];}catch(e){return[];}}
+function saveUndo(){localStorage.setItem(LS+'_undo',JSON.stringify(undoStack.slice(-10)));}
+function snapshot(label){undoStack.push({s:JSON.stringify(state),label});undoStack=undoStack.slice(-10);saveUndo();}
+function undo(){if(!undoStack.length)return;state=JSON.parse(undoStack.pop().s);if(state.active>=state.channels.length)state.active=0;openLt=-1;saveUndo();save();renderAll();}
+let mode='work';
+
+function pd(s){if(!s)return null;const[y,m,dd]=s.split('-').map(Number);return new Date(y,m-1,dd);}
+function dealStatus(d){if(d.end)return'Churned';if(d.start)return'Servicing';if(d.create)return'Closed won';return'Closed won';}
+function businessDays(a,b){
+  if(b<a)return 0;
+  let cnt=0,cur=new Date(a.getFullYear(),a.getMonth(),a.getDate());
+  const end=new Date(b.getFullYear(),b.getMonth(),b.getDate());
+  while(cur<=end){const wd=cur.getDay();if(wd>=1&&wd<=5)cnt++;cur.setDate(cur.getDate()+1);}
+  return cnt;
+}
+// Accumulate a fixed monthly amount from start to asOf, prorating partial
+// (start / churn) months by business days, but charging full for whole months.
+function accrue(monthly,start,asOf){
+  if(!start||asOf<start)return 0;
+  const daily=monthly/4.3/5;
+  let total=0,y=start.getFullYear(),mo=start.getMonth();
+  const ey=asOf.getFullYear(),em=asOf.getMonth();
+  while(y<ey||(y===ey&&mo<=em)){
+    const first=new Date(y,mo,1),last=new Date(y,mo+1,0);
+    const segStart=first<start?start:first;
+    const segEnd=last>asOf?asOf:last;
+    const whole=segStart<=first&&segEnd>=last;
+    total+=whole?monthly:Math.min(daily*businessDays(segStart,segEnd),monthly);
+    mo++;if(mo>11){mo=0;y++;}
+  }
+  return total;
+}
+function mgpOf(d){return (Number(d.revenue)||0)-(Number(d.vpay)||0);}
+function lifetime(d){
+  if(!d.start)return 0;
+  const asOf=d.end?pd(d.end):today;
+  return accrue(mgpOf(d),pd(d.start),asOf);
+}
+function ltBreakdown(d,q){
+  const start0=pd(d.start); if(!start0)return null;
+  const monthly=mgpOf(d), weekly=monthly/4.3, daily=weekly/5;
+  const b=periodBounds(q);
+  let start=start0, asOf=d.end?pd(d.end):today;
+  if(b){start=start0>b.pStart?start0:b.pStart; asOf=asOf<b.pEnd?asOf:b.pEnd;}
+  if(asOf<start)return {monthly,weekly,daily,lines:[],total:0};
+  const lines=[]; let y=start.getFullYear(),mo=start.getMonth();
+  const ey=asOf.getFullYear(),em=asOf.getMonth();
+  while(y<ey||(y===ey&&mo<=em)){
+    const first=new Date(y,mo,1),last=new Date(y,mo+1,0);
+    const segStart=first<start?start:first, segEnd=last>asOf?asOf:last;
+    const bd=businessDays(segStart,segEnd);
+    const full=segStart<=first&&segEnd>=last;
+    const weeks=Math.floor(bd/5), days=bd%5;
+    lines.push({month:MONTHS[mo].slice(0,3)+' '+y, bd, weeks, days, amount:full?monthly:Math.min(daily*bd,monthly), full});
+    mo++;if(mo>11){mo=0;y++;}
+  }
+  return {monthly,weekly,daily,lines,total:lines.reduce((a,l)=>a+l.amount,0)};
+}
+function breakdownRow(d,q){
+  const b=ltBreakdown(d,q); if(!b)return'';
+  const rows=b.lines.map(l=>{
+    let desc;
+    if(l.full)desc='full month';
+    else{const p=[];if(l.weeks)p.push(`${l.weeks} week${l.weeks>1?'s':''} × ${fmt(b.weekly)}`);if(l.days)p.push(`${l.days} day${l.days>1?'s':''} × ${fmt(b.daily)}`);desc=p.join(' + ')||'—';}
+    return `<tr><td style="text-align:left;color:var(--muted)">${l.month}</td><td style="text-align:left;color:var(--muted);padding-left:10px">${desc}</td><td style="text-align:right">${fmt(l.amount)}</td></tr>`;
+  }).join('');
+  return `<tr class="ltrow"><td colspan="10" style="border-top:none;padding:0 4px">
+    <div class="ltcard">
+      <div style="font-weight:600;margin-bottom:6px;cursor:pointer;user-select:none" onclick="var x=this.parentNode.querySelector('.ltexpl');x.style.display=x.style.display==='none'?'block':'none'">How ${d.name}'s lifetime is calculated</div>
+      <div class="ltexpl" style="display:none;color:var(--muted);margin-bottom:9px">Monthly MGP ${fmt(b.monthly)} (revenue − vendor pay). Counted by priority — <b style="color:var(--jet)">month → week → day</b>: weekly = ${fmt(b.monthly)} ÷ 4.3 = <b style="color:var(--jet)">${fmt(b.weekly)}</b>, daily = weekly ÷ 5 = <b style="color:var(--jet)">${fmt(b.daily)}</b>. A whole month bills the full ${fmt(b.monthly)}; a partial month counts whole weeks first, then leftover days.</div>
+      <table class="ltbreak"><tbody>${rows}
+        <tr><td colspan="2" style="text-align:left;font-weight:600;border-top:1px solid var(--line);padding-top:7px">${q?'Earned this period':('Lifetime '+(d.end?'(final)':'as of today'))}</td><td style="text-align:right;font-weight:600;border-top:1px solid var(--line);padding-top:7px">${fmt(b.total)}</td></tr>
+      </tbody></table>
+    </div></td></tr>`;
+}
+function fmtDate(str){const d=pd(str);if(!d)return'—';return MONTHS[d.getMonth()].slice(0,3)+' '+d.getDate();}
+
+const qOfMonth=name=>Math.floor(MONTHS.indexOf(name)/3)+1;
+const byMonth=(a,b)=>MONTHS.indexOf(a.mo.month)-MONTHS.indexOf(b.mo.month);
+// A scope is 0 (all time) or {from,to} month indices (0-11).
+const qScope=q=>q?{from:(q-1)*3,to:q*3-1}:0;
+function monthInScope(name,scope){if(!scope)return true;const i=MONTHS.indexOf(name);return i>=scope.from&&i<=scope.to;}
+function periodBounds(scope){
+  if(!scope)return null;
+  const year=today.getFullYear();
+  const pStart=new Date(year,scope.from,1), pEndCal=new Date(year,scope.to+1,0);
+  return {pStart,pEnd:pEndCal>today?today:pEndCal};
+}
+function scopeLabelOf(scope){return scope?MONTHS[scope.from].slice(0,3)+'–'+MONTHS[scope.to].slice(0,3)+' '+today.getFullYear():'';}
+// MGP earned by a deal, optionally clamped to a period (q=0 → all time / lifetime).
+function ltScoped(d,q){
+  if(!d.start)return 0;
+  const b=periodBounds(q);
+  if(!b)return lifetime(d);
+  const st=pd(d.start),de=d.end?pd(d.end):today;
+  const ss=st>b.pStart?st:b.pStart, se=de<b.pEnd?de:b.pEnd;
+  return se<ss?0:accrue(mgpOf(d),ss,se);
+}
+// Is a deal active/relevant within the period?
+function dealInPeriod(d,q){
+  const b=periodBounds(q); if(!b)return true;
+  if(d.start){const st=pd(d.start),de=d.end?pd(d.end):today;return st<=b.pEnd&&de>=b.pStart;}
+  return d.create&&pd(d.create)>=b.pStart&&pd(d.create)<=b.pEnd;
+}
+function metrics(ch){return periodMetrics(ch,0);}
+function periodMetrics(ch,q){
+  const b=periodBounds(q);
+  const mos=b?ch.months.filter(mo=>monthInScope(mo.month,q)):ch.months;
+  const s=f=>mos.reduce((a,x)=>a+(+x[f]||0),0);
+  const spend=s('spend'),leads=s('leads'),qual=s('qualified'),won=s('won');
+  const dealsIn=ch.deals.filter(d=>dealInPeriod(d,q));
+  const servicing=b
+    ? dealsIn.filter(d=>d.start&&pd(d.start)<=b.pEnd&&(!d.end||pd(d.end)>=b.pStart)).length
+    : ch.deals.filter(d=>dealStatus(d)==='Servicing').length;
+  const gross=ch.deals.reduce((a,d)=>a+ltScoped(d,q),0);
+  const net=gross-spend;
+  const roi=spend>0?net/spend*100:0;
+  const monthlyRate=(b?dealsIn.filter(d=>d.start&&pd(d.start)<=b.pEnd&&(!d.end||pd(d.end)>=b.pStart)):ch.deals.filter(d=>d.start&&!d.end)).reduce((a,d)=>a+mgpOf(d),0);
+  const monthCount=mos.length;
+  const monthlySpend=monthCount>0?spend/monthCount:0;
+  const netMonthly=monthlyRate-monthlySpend;
+  const paybackOff=monthlyRate>0?spend/monthlyRate:0;          // option 1: stop spending, recoup spend from MGP
+  const paybackProfit=(net<0&&netMonthly>0)?(-net)/netMonthly:0; // option 2: months until in the black while still spending
+  const breakeven=paybackProfit;
+  const cpl=leads>0?spend/leads:0, cpq=qual>0?spend/qual:0, cpw=won>0?spend/won:0;
+  const conv=leads>0?won/leads*100:0;
+  const perDollar=spend>0?gross/spend:0;
+  return {spend,leads,qual,won,servicing,gross,net,roi,monthlyRate,monthlySpend,netMonthly,paybackOff,paybackProfit,payback:paybackOff,breakeven,cpl,cpq,cpw,conv,perDollar};
+}
+
+function renderChips(){
+  const c=document.getElementById('chips');
+  const chips=state.channels.map((ch,i)=>`<button class="chip ${i===state.active?'on':''}" onclick="pick(${i})">${ch.name}</button>`).join('');
+  const add=`<button class="chip add" onclick="addChannel()">+ Add channel</button>`;
+  const del=state.channels.length>1?`<button class="chip" style="border-color:var(--line);color:var(--red)" onclick="delChannel(${state.active})" title="Remove the selected channel">Remove channel</button>`:'';
+  const undoBtn=undoStack.length?`<button style="margin-left:auto;background:none;border:none;color:var(--hint);font-family:inherit;font-size:12px;font-weight:400;cursor:pointer;padding:6px 6px;text-decoration:underline;text-underline-offset:2px" onclick="undo()" title="Undo: ${undoStack[undoStack.length-1].label}">↶ Undo</button>`:'';
+  c.innerHTML=chips+add+del+undoBtn;
+}
+let openLt=-1;
+function toggleLt(i){openLt=openLt===i?-1:i;renderAll();}
+let monthView='month',qPick=0,rangeFrom=0,rangeTo=today.getMonth();
+function setMonthView(v){monthView=v;renderAll();}
+function setQ(v){qPick=+v;renderAll();}
+function setRange(which,v){if(which==='from')rangeFrom=+v;else rangeTo=+v;if(rangeTo<rangeFrom)rangeTo=rangeFrom;renderAll();}
+function workScope(){if(monthView==='quarter'&&qPick>0)return qScope(qPick);if(monthView==='range')return {from:rangeFrom,to:rangeTo};return 0;}
+let presPeriod=0,presRangeFrom=0,presRangeTo=today.getMonth();
+function setPresPeriod(v){presPeriod=+v;renderAll();}
+function setPresRange(which,v){if(which==='from')presRangeFrom=+v;else presRangeTo=+v;if(presRangeTo<presRangeFrom)presRangeTo=presRangeFrom;renderAll();}
+function curPresScope(){if(presPeriod===5)return {from:presRangeFrom,to:presRangeTo};return qScope(presPeriod);}
+let sumPeriod=0,sumRangeFrom=0,sumRangeTo=today.getMonth();
+function setSumPeriod(v){sumPeriod=+v;renderAll();}
+function setSumRange(which,v){if(which==='from')sumRangeFrom=+v;else sumRangeTo=+v;if(sumRangeTo<sumRangeFrom)sumRangeTo=sumRangeFrom;renderAll();}
+function curSumScope(){if(sumPeriod===5)return {from:sumRangeFrom,to:sumRangeTo};return qScope(sumPeriod);}
+let dealFilter='all';
+function setDealFilter(v){dealFilter=v;renderAll();}
+let sumCard='',sumDealFilter='all';
+function toggleSumCard(c){sumCard=sumCard===c?'':c;renderAll();}
+function setSumDealFilter(v){sumDealFilter=v;renderAll();}
+let presSpentOpen=false,presEarnOpen=false;
+function toggleSpent(){presSpentOpen=!presSpentOpen;renderAll();}
+function toggleEarn(){presEarnOpen=!presEarnOpen;renderAll();}
+let roiNote=false;
+function toggleRoi(){roiNote=!roiNote;renderAll();}
+let pbNote=false;
+function togglePb(){pbNote=!pbNote;renderAll();}
+let paybackMode='profit'; // 'profit' = months until in the black (default), 'off' = recoup if channel switched off
+function setPbMode(m){paybackMode=m;renderAll();}
+function paybackDisplay(m){
+  if(paybackMode==='off')return m.monthlyRate>0?m.paybackOff.toFixed(1)+' mo':'—';
+  if(m.net>=0)return 'in black';
+  if(m.netMonthly>0)return m.paybackProfit.toFixed(1)+' mo';
+  return '—';
+}
+function pick(i){state.active=i;openLt=-1;save();renderAll();}
+function addChannel(){
+  const n=prompt('New marketing channel name:');
+  if(!n)return;
+  state.channels.push({name:n.trim(),period:'Q1 2026',months:[{month:MONTHS[today.getMonth()],spend:0,leads:0,qualified:0,won:0}],deals:[]});
+  state.active=state.channels.length-1;save();renderAll();
+}
+function delChannel(i){
+  if(state.channels.length<=1){alert('Keep at least one channel.');return;}
+  if(!confirm('Remove channel "'+state.channels[i].name+'"? You can undo it.'))return;
+  snapshot('Removed channel '+state.channels[i].name);
+  state.channels.splice(i,1);
+  if(state.active>=state.channels.length)state.active=state.channels.length-1;
+  openLt=-1;save();renderAll();
+}
+
+function parseNum(v){const n=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(n)?0:n;}
+function editMonth(idx,field,val){state.channels[state.active].months[idx][field]=parseNum(val);save();renderAll();}
+function addMonth(){
+  const ch=state.channels[state.active];
+  const used=ch.months.map(m=>m.month);
+  const next=MONTHS.find(m=>!used.includes(m))||MONTHS[0];
+  ch.months.push({month:next,spend:0,leads:0,qualified:0,won:0});save();renderAll();
+}
+function delDeal(i){const ch=state.channels[state.active];if(confirm('Remove deal "'+ch.deals[i].name+'"? You can undo it.')){snapshot('Removed deal '+ch.deals[i].name);ch.deals.splice(i,1);save();renderAll();}}
+let editIdx=-1;
+const setVal=(id,v)=>document.getElementById(id).value=v;
+function updMgp(){
+  const r=parseNum(document.getElementById('dRev').value), v=parseNum(document.getElementById('dVpay').value);
+  document.getElementById('dMgpView').value=fmt(r-v);
+}
+function openAddDeal(){
+  editIdx=-1;
+  ['dName','dRev','dVpay','dCreate','dStart','dEnd'].forEach(id=>setVal(id,''));
+  updMgp();
+  document.getElementById('saveBtn').textContent='Save deal';
+  document.getElementById('dealForm').classList.add('show');
+}
+function editDeal(i){
+  const d=state.channels[state.active].deals[i]; editIdx=i;
+  setVal('dName',d.name);setVal('dRev',fmt(d.revenue));setVal('dVpay',fmt(d.vpay));
+  setVal('dCreate',d.create||'');setVal('dStart',d.start||'');setVal('dEnd',d.end||'');
+  updMgp();
+  document.getElementById('saveBtn').textContent='Update deal';
+  const f=document.getElementById('dealForm'); f.classList.add('show');
+  f.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function cancelDeal(){editIdx=-1;renderAll();}
+function saveDeal(){
+  const g=id=>document.getElementById(id).value;
+  const name=g('dName').trim(); if(!name){alert('Deal name required');return;}
+  const rev=parseNum(g('dRev')), vp=parseNum(g('dVpay'));
+  const obj={name, revenue:rev, vpay:vp, mgp:rev-vp,
+    create:g('dCreate'), start:g('dStart'), end:g('dEnd')};
+  const ch=state.channels[state.active];
+  if(editIdx>=0)ch.deals[editIdx]=obj; else ch.deals.push(obj);
+  editIdx=-1; save(); renderAll();
+}
+
+function renderWork(){
+  const ch=state.channels[state.active];
+  const scope=workScope();
+  const m=periodMetrics(ch,scope);
+  const scopeLabel=scope?scopeLabelOf(scope):'Year '+today.getFullYear();
+  document.getElementById('brandSub').textContent=ch.name+' · '+scopeLabel;
+  const kpi=(l,v,cls='')=>`<div class="kpi"><div class="l">${l}</div><div class="v ${cls}">${v}</div></div>`;
+  const funnel=`
+    <div class="funnel">
+      <div class="fstep"><div class="l">Leads</div><div class="n">${m.leads}</div></div>
+      <div class="farrow">›</div>
+      <div class="fstep"><div class="l">Qualified lead</div><div class="n">${m.qual}</div></div>
+      <div class="farrow">›</div>
+      <div class="fstep won"><div class="l">Closed won</div><div class="n">${m.won}</div></div>
+      <div class="farrow">›</div>
+      <div class="fstep svc"><div class="l">Servicing</div><div class="n">${m.servicing}</div></div>
+    </div>`;
+  const qOf=name=>Math.floor(MONTHS.indexOf(name)/3)+1;
+  const editRow=(mo,i)=>`<tr><td class="l">${mo.month}</td>
+      <td><input class="minput" value="${fmt(mo.spend)}" onfocus="this.select()" onchange="editMonth(${i},'spend',this.value)"></td>
+      <td><input class="minput" value="${mo.leads}" onchange="editMonth(${i},'leads',this.value)"></td>
+      <td><input class="minput" value="${mo.qualified}" onchange="editMonth(${i},'qualified',this.value)"></td>
+      <td><input class="minput" value="${mo.won}" onchange="editMonth(${i},'won',this.value)"></td></tr>`;
+  const sum=(arr,f)=>arr.reduce((a,x)=>a+(+x[f]||0),0);
+  const sumRow=(label,arr,bold)=>{const w=bold?' style="font-weight:600"':'';return `<tr><td class="l"${w}>${label}</td><td${w}>${fmt(sum(arr,'spend'))}</td><td${w}>${sum(arr,'leads')}</td><td${w}>${sum(arr,'qualified')}</td><td${w}>${sum(arr,'won')}</td></tr>`;};
+  const noData=l=>`<tr><td colspan="5" style="text-align:center;color:var(--hint);padding:11px">${l}</td></tr>`;
+  let periodRows;
+  if(monthView==='year'){
+    periodRows=ch.months.length?sumRow('Full year '+today.getFullYear(),ch.months,true):noData('No months yet');
+  }else if(monthView==='quarter'&&qPick>0){
+    const qm=ch.months.map((mo,i)=>({mo,i})).filter(x=>qOf(x.mo.month)===qPick).sort(byMonth);
+    periodRows=qm.length?qm.map(x=>editRow(x.mo,x.i)).join('')+sumRow('Q'+qPick+' total',qm.map(x=>x.mo),true):noData('No months in Q'+qPick);
+  }else if(monthView==='quarter'){
+    periodRows='';for(let q=1;q<=4;q++){const qm=ch.months.filter(mo=>qOf(mo.month)===q);if(qm.length)periodRows+=sumRow('Q'+q,qm,false);}
+    if(!periodRows)periodRows=noData('No data');
+  }else if(monthView==='range'){
+    const rm=ch.months.map((mo,i)=>({mo,i})).filter(x=>monthInScope(x.mo.month,scope)).sort(byMonth);
+    periodRows=rm.length?rm.map(x=>editRow(x.mo,x.i)).join('')+sumRow(scopeLabelOf(scope)+' total',rm.map(x=>x.mo),true):noData('No months in this range');
+  }else{
+    const om=ch.months.map((mo,i)=>({mo,i})).sort(byMonth);
+    periodRows=om.length?om.map(x=>editRow(x.mo,x.i)).join(''):noData('No months yet');
+  }
+  const vbtn=(v,l)=>`<button class="${monthView===v?'on':''}" onclick="setMonthView('${v}')">${l}</button>`;
+  const vseg=`<div class="vseg">${vbtn('month','Month')}${vbtn('quarter','Quarter')}${vbtn('range','Range')}${vbtn('year','Year')}</div>`;
+  const qopts=[[0,'All quarters'],[1,'Q1 (Jan–Mar)'],[2,'Q2 (Apr–Jun)'],[3,'Q3 (Jul–Sep)'],[4,'Q4 (Oct–Dec)']];
+  const qSel=monthView==='quarter'?`<select class="qsel" onchange="setQ(this.value)">${qopts.map(o=>`<option value="${o[0]}"${qPick===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select>`:'';
+  const moOpt=(sel,cb)=>`<select class="qsel" onchange="${cb}">${MONTHS.map((mn,i)=>`<option value="${i}"${sel===i?' selected':''}>${mn.slice(0,3)}</option>`).join('')}</select>`;
+  const rangeSel=monthView==='range'?`<span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px">${moOpt(rangeFrom,"setRange('from',this.value)")} to ${moOpt(rangeTo,"setRange('to',this.value)")}</span>`:'';
+  const addBtn=monthView==='month'?`<button class="btn ghost sm" onclick="addMonth()">+ Month</button>`:'';
+  const dealOrder=ch.deals.map((d,i)=>({d,i})).filter(x=>dealInPeriod(x.d,scope)).filter(x=>dealFilter==='all'||dealStatus(x.d)===dealFilter).sort((a,b)=>{
+    const ca=a.d.create||'',cb=b.d.create||'';
+    if(!ca&&!cb)return 0; if(!ca)return 1; if(!cb)return -1;
+    return ca<cb?-1:ca>cb?1:0;
+  });
+  const dealRows=dealOrder.map(({d,i})=>{
+    const st=dealStatus(d); const cls=st==='Servicing'?'svc':st==='Closed won'?'won':'chn';
+    const lt=d.start?`<span class="ltlink" onclick="toggleLt(${i})">${fmt(ltScoped(d,scope))}</span>`:'—';
+    const main=`<tr>
+      <td class="l dealname">${d.name}</td>
+      <td>${fmt(d.revenue)}</td>
+      <td>${fmt(d.vpay)}</td>
+      <td>${fmt(mgpOf(d))}</td>
+      <td>${fmtDate(d.create)}</td>
+      <td>${fmtDate(d.start)}</td>
+      <td>${fmtDate(d.end)}</td>
+      <td style="font-weight:600">${lt}</td>
+      <td style="text-align:center"><span class="pill ${cls}">${st}</span></td>
+      <td style="white-space:nowrap"><button class="xbtn" onclick="editDeal(${i})" title="Edit">✎</button><button class="xbtn" onclick="delDeal(${i})" title="Remove">×</button></td></tr>`;
+    return main+(openLt===i&&d.start?breakdownRow(d,scope):'');}).join('')||
+      `<tr><td colspan="10" style="text-align:center;color:var(--hint);padding:14px">${dealFilter!=='all'?'No '+dealFilter+' deals'+(scope?' in this period.':'.'):(scope?'No deals active in this period.':'No deals yet — add the first closed-won client.')}</td></tr>`;
+  const dt=(f)=>dealOrder.reduce((a,x)=>a+f(x.d),0);
+  const dealTotal=dealOrder.length?`<tr style="border-top:2px solid var(--line)">
+      <td class="l" style="font-weight:600">Total${dealFilter!=='all'?' ('+dealFilter+')':''}</td>
+      <td style="font-weight:600">${fmt(dt(d=>+d.revenue||0))}</td>
+      <td style="font-weight:600">${fmt(dt(d=>+d.vpay||0))}</td>
+      <td style="font-weight:600">${fmt(dt(d=>mgpOf(d)))}</td>
+      <td></td><td></td><td></td>
+      <td style="font-weight:600">${fmt(dt(d=>d.start?ltScoped(d,scope):0))}</td>
+      <td></td><td></td></tr>`:'';
+
+  document.getElementById('workView').innerHTML=`
+    <div class="card">
+      <div class="kpis">
+        ${kpi('Spend',fmt(m.spend))}
+        ${kpi('Gross profit',fmt(m.gross))}
+        ${kpi(m.net>=0?'Net profit':'Net loss',fmt(m.net),m.net>=0?'pos':'neg')}
+        <div class="kpi" style="cursor:pointer" onclick="toggleRoi()" title="Tap for plain-English meaning"><div class="l">ROI <i style="font-style:normal;color:var(--hint);font-size:11px">ⓘ</i></div><div class="v ${m.roi>=0?'pos':'neg'}">${Math.round(m.roi)}%</div></div>
+        <div class="kpi" style="cursor:pointer" onclick="togglePb()" title="Tap for the two payback views"><div class="l">${paybackMode==='profit'?'Time to profit':'Payback (off)'} <i style="font-style:normal;color:var(--hint);font-size:11px">ⓘ</i></div><div class="v">${paybackDisplay(m)}</div></div>
+      </div>
+      ${roiNote?`<div class="ltcard" style="margin-top:14px;margin-bottom:0;font-size:14px;line-height:1.7">
+        <b style="font-size:15px">Just move the decimal 2 places: ${Math.round(m.roi)}% → ${(m.roi/100).toFixed(2)}×.</b><br>
+        So every $1 you spent → about <b>${fmt(m.roi/100)}</b> profit. ${m.roi>=100?'(you <b>more than doubled</b> your money 🎉)':'(you have <b>not doubled</b> your money yet)'}<br>
+        <span style="color:var(--muted)">Reminder: 100% = exactly double · 50% = 0.5× (half your spend back as profit). You spent ${fmt(m.spend)}, profit ${fmt(m.net)}.</span>
+      </div>`:''}
+      ${pbNote?`<div class="ltcard" style="margin-top:14px;margin-bottom:0;font-size:14px;line-height:1.7">
+        <div class="vseg" style="margin-bottom:10px"><button class="${paybackMode==='profit'?'on':''}" onclick="setPbMode('profit')">Time to profit</button><button class="${paybackMode==='off'?'on':''}" onclick="setPbMode('off')">If switched off</button></div>
+        <div style="${paybackMode==='profit'?'':'opacity:.5'}">
+          <b>① Time to profit</b> (default) — months until in the black while you keep spending.<br>
+          Each month: ${fmt(m.monthlyRate)} MGP − ${fmt(m.monthlySpend)} spend = <b>${fmt(m.netMonthly)} net/month</b>. ${m.net>=0?'<b style="color:var(--green-dk)">Already profitable ✓</b>':(m.netMonthly>0?`Loss to climb out of ${fmt(-m.net)} ÷ ${fmt(m.netMonthly)} = <b>${m.paybackProfit.toFixed(1)} months</b>.`:'<b style="color:var(--red)">Spending more than it earns each month — won’t break even at this rate.</b>')}
+        </div>
+        <div style="margin-top:9px;${paybackMode==='off'?'':'opacity:.5'}">
+          <b>② If switched off</b> — recoup the spend from MGP alone (no more spending).<br>
+          ${m.monthlyRate>0?`${fmt(m.spend)} ÷ ${fmt(m.monthlyRate)} MGP/month = <b>${m.paybackOff.toFixed(1)} months</b>.`:'no active deals to earn from.'}
+        </div>
+      </div>`:''}
+    </div>
+
+    <div class="card">
+      <div class="sec-h"><h2>Funnel</h2>
+        <span class="badge ${m.net>=0?'good':'bad'}">${m.net>=0?'● Profitable':'● Not yet profitable'}</span></div>
+      ${funnel}
+    </div>
+
+    <div class="card">
+      <div class="cols">
+        <div>
+          <div class="sec-h"><h2>By period</h2>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${vseg}${qSel}${rangeSel}${addBtn}</div>
+          </div>
+          <table>
+            <tr><th class="l">Period</th><th>Spend</th><th>Leads</th><th>QL</th><th>Won</th></tr>
+            ${periodRows}
+          </table>
+        </div>
+        <div class="colsep">
+          <div class="sec-h"><h2>Cost analysis</h2></div>
+          <table>
+            <tr class="anrow"><td class="l">Cost per lead</td><td>${m.cpl?fmt(m.cpl):'—'}</td></tr>
+            <tr class="anrow"><td class="l">Cost per qualified</td><td>${m.cpq?fmt(m.cpq):'—'}</td></tr>
+            <tr class="anrow"><td class="l">Cost per won</td><td>${m.cpw?fmt(m.cpw):'—'}</td></tr>
+            <tr class="anrow"><td class="l">Conversion rate</td><td>${Math.round(m.conv)}%</td></tr>
+            <tr class="anrow"><td class="l">Return per $1</td><td>${fmt(m.perDollar)}</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-h"><h2>Deals</h2>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <select class="qsel" onchange="setDealFilter(this.value)">
+            ${['all','Servicing','Closed won','Churned'].map(o=>`<option value="${o}"${dealFilter===o?' selected':''}>${o==='all'?'All statuses':o}</option>`).join('')}
+          </select>
+          <button class="btn sm" onclick="openAddDeal()">+ Add deal</button>
+        </div>
+      </div>
+      <table>
+        <tr><th class="l">Deal</th><th>Revenue</th><th>Vendor pay</th><th>MGP/mo</th><th>Created</th><th>Started</th><th>Ended</th><th>${scope?'Earned':'Lifetime'}</th><th style="text-align:center">Status</th><th></th></tr>
+        ${dealRows}${dealTotal}
+      </table>
+      <div class="form" id="dealForm">
+        <div class="fgrid">
+          <div class="fld"><label>Deal name</label><input id="dName" placeholder="Client name"></div>
+          <div class="fld"><label>Revenue</label><input id="dRev" type="text" placeholder="$0.00" oninput="updMgp()"></div>
+          <div class="fld"><label>Vendor pay</label><input id="dVpay" type="text" placeholder="$0.00" oninput="updMgp()"></div>
+          <div class="fld"><label>MGP / month (auto)</label><input id="dMgpView" type="text" readonly value="$0.00" style="background:var(--alabaster);color:var(--muted)"></div>
+          <div class="fld"><label>Create date</label><input id="dCreate" type="date"></div>
+          <div class="fld"><label>Date started</label><input id="dStart" type="date"></div>
+          <div class="fld"><label>Date ended</label><input id="dEnd" type="date"></div>
+        </div>
+        <div class="formact">
+          <button class="btn" id="saveBtn" onclick="saveDeal()">Save deal</button>
+          <button class="btn ghost" onclick="cancelDeal()">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function presMetrics(ch){return periodMetrics(ch,curPresScope());}
+function spentByMonth(ch,q){
+  const b=periodBounds(q);
+  const mos=b?ch.months.filter(mo=>monthInScope(mo.month,q)):ch.months;
+  const rows=mos.map(mo=>({label:mo.month+' '+today.getFullYear(),amount:+mo.spend||0}));
+  return {rows,total:rows.reduce((a,r)=>a+r.amount,0)};
+}
+function earnedByMonth(ch,q){
+  const b=periodBounds(q);
+  const starts=ch.deals.filter(d=>d.start).map(d=>pd(d.start).getTime());
+  if(!starts.length)return {rows:[],total:0};
+  let rangeStart=new Date(Math.min(...starts)), rangeEnd=today;
+  if(b){if(rangeStart<b.pStart)rangeStart=b.pStart; if(rangeEnd>b.pEnd)rangeEnd=b.pEnd;}
+  const rows=[]; let y=rangeStart.getFullYear(),mo=rangeStart.getMonth();
+  const ey=rangeEnd.getFullYear(),em=rangeEnd.getMonth();
+  while(y<ey||(y===ey&&mo<=em)){
+    const first=new Date(y,mo,1),last=new Date(y,mo+1,0);
+    let amt=0;
+    for(const d of ch.deals){
+      if(!d.start)continue;
+      const ds=pd(d.start),de=d.end?pd(d.end):today;
+      let cs=ds>first?ds:first, ce=de<last?de:last;
+      if(b){if(cs<b.pStart)cs=b.pStart; if(ce>b.pEnd)ce=b.pEnd;}
+      if(ce<cs)continue;
+      amt+=accrue(mgpOf(d),cs,ce);
+    }
+    if(amt>0.005)rows.push({label:MONTHS[mo]+' '+y,amount:amt});
+    mo++;if(mo>11){mo=0;y++;}
+  }
+  return {rows,total:rows.reduce((a,r)=>a+r.amount,0)};
+}
+function presBreak(title,data,note){
+  const rows=data.rows.map(r=>`<tr><td style="text-align:left;color:var(--muted)">${r.label}</td><td style="text-align:right">${fmt(r.amount)}</td></tr>`).join('')||`<tr><td style="color:var(--hint)">No data in this period</td><td></td></tr>`;
+  return `<div class="ltcard" style="margin:0 0 16px;font-size:13px;text-align:left">
+    <div style="font-weight:600;margin-bottom:6px">${title}</div>
+    <table class="ltbreak"><tbody>${rows}
+      <tr><td style="text-align:left;font-weight:600;border-top:1px solid var(--line);padding-top:6px">Total</td><td style="text-align:right;font-weight:600;border-top:1px solid var(--line);padding-top:6px">${fmt(data.total)}</td></tr>
+    </tbody></table>
+    ${note?`<div style="color:var(--muted);margin-top:7px">${note}</div>`:''}
+  </div>`;
+}
+function renderPres(){
+  const ch=state.channels[state.active]; const m=presMetrics(ch);
+  const profitable=m.net>=0;
+  const pscope=curPresScope();
+  const plabel=pscope?scopeLabelOf(pscope).toUpperCase():'YEAR '+today.getFullYear();
+  const perWord=pscope?'this period':'so far';
+  const moOptP=(sel,cb)=>`<select class="qsel" onchange="${cb}">${MONTHS.map((mn,i)=>`<option value="${i}"${sel===i?' selected':''}>${mn.slice(0,3)}</option>`).join('')}</select>`;
+  const presSel=`<div style="margin-top:13px"><select class="qsel" onchange="setPresPeriod(this.value)">
+    <option value="0"${presPeriod===0?' selected':''}>Year ${today.getFullYear()}</option>
+    <option value="1"${presPeriod===1?' selected':''}>Q1 (Jan–Mar)</option>
+    <option value="2"${presPeriod===2?' selected':''}>Q2 (Apr–Jun)</option>
+    <option value="3"${presPeriod===3?' selected':''}>Q3 (Jul–Sep)</option>
+    <option value="4"${presPeriod===4?' selected':''}>Q4 (Oct–Dec)</option>
+    <option value="5"${presPeriod===5?' selected':''}>Custom range…</option></select>${presPeriod===5?`<span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;margin-left:8px">${moOptP(presRangeFrom,"setPresRange('from',this.value)")} to ${moOptP(presRangeTo,"setPresRange('to',this.value)")}</span>`:''}</div>`;
+  const counts=[m.leads,m.qual,m.won,m.servicing];
+  const max=Math.max(...counts,1);
+  const h=n=>Math.max(14,Math.round(n/max*100))+'%';
+  document.getElementById('presView').innerHTML=`
+    <div class="card" style="padding:26px 26px 28px;">
+      <div class="pres-head">
+        <div class="eyebrow">CHANNEL PERFORMANCE · ${plabel}</div>
+        <div class="verdict">${ch.name} is ${profitable?'profitable':'not yet profitable'}</div>
+        <div class="pres-chip" style="${profitable?'':'background:#FAECE7;color:#993C1D'}">${profitable?'↗':'↘'} ${Math.round(m.roi)}% return${profitable?(m.payback?' · pays back in '+m.payback.toFixed(1)+' months':''):(m.breakeven?' · break-even in ~'+m.breakeven.toFixed(1)+' months':'')}</div>
+        ${presSel}
+      </div>
+      <div class="money">
+        <div class="mbox spend" style="cursor:pointer" onclick="toggleSpent()"><div class="l">We spent <i style="font-style:normal;font-size:11px;opacity:.7">ⓘ</i></div><div class="big">${fmt(m.spend)}</div><div class="s">on this channel</div></div>
+        <div class="mop">→</div>
+        <div class="mbox earn" style="cursor:pointer" onclick="toggleEarn()"><div class="l">It earned <i style="font-style:normal;font-size:11px;opacity:.7">ⓘ</i></div><div class="big">${fmt(m.gross)}</div><div class="s">gross profit ${perWord}</div></div>
+        <div class="mop">=</div>
+        <div class="mbox net" style="${profitable?'':'background:#FAECE7'}"><div class="l" style="${profitable?'':'color:#993C1D'}">${profitable?'Net profit':'Net loss'}</div><div class="big" style="${profitable?'':'color:#993C1D'}">${fmt(m.net)}</div><div class="s" style="${profitable?'':'color:#993C1D'}">${profitable?(presPeriod===0?'and still growing':'this period'):'spent more than earned so far'}</div></div>
+      </div>
+      ${presSpentOpen?presBreak('We spent — by month ('+plabel.toLowerCase()+')',spentByMonth(ch,pscope),'Each month’s marketing spend for this channel, added up.'):''}
+      ${presEarnOpen?presBreak('It earned — MGP by month ('+plabel.toLowerCase()+')',earnedByMonth(ch,pscope),'Each month adds up every active deal’s MGP (whole month = full MGP, partial = prorated by business days).'):''}
+      <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px;">How the money moved</div>
+      <div class="bars">
+        <div class="barwrap"><div class="n" style="color:#7a786f">${m.leads}</div><div class="bar" style="height:${h(m.leads)};background:#E3E1DA"></div></div>
+        <div class="mop" style="height:60px">›</div>
+        <div class="barwrap"><div class="n" style="color:#605e56">${m.qual}</div><div class="bar" style="height:${h(m.qual)};background:#CBC8BE"></div></div>
+        <div class="mop" style="height:60px">›</div>
+        <div class="barwrap"><div class="n" style="color:var(--wheat-dk)">${m.won}</div><div class="bar" style="height:${h(m.won)};background:#F4D5B5"></div></div>
+        <div class="mop" style="height:60px">›</div>
+        <div class="barwrap"><div class="n" style="color:var(--green-dk)">${m.servicing}</div><div class="bar" style="height:${h(m.servicing)};background:#86D080"></div></div>
+      </div>
+      <div class="blabels">
+        <div>Leads<br><span class="sub2">got noticed</span></div>
+        <div>Qualified<br><span class="sub2">worth pursuing</span></div>
+        <div>Closed won<br><span class="sub2">signed up</span></div>
+        <div>Servicing<br><span class="sub2">paying us</span></div>
+      </div>
+      <div class="takeaway">💡 ${m.won} of ${m.leads} leads became paying clients — every $1 spent is returning ${fmt(m.perDollar)}.</div>
+    </div>`;
+}
+
+function setMode(md){
+  mode=md;
+  document.getElementById('mWork').classList.toggle('on',md==='work');
+  document.getElementById('mPres').classList.toggle('on',md==='present');
+  document.getElementById('mSum').classList.toggle('on',md==='summary');
+  document.getElementById('workView').style.display=md==='work'?'block':'none';
+  document.getElementById('presView').style.display=md==='present'?'block':'none';
+  document.getElementById('summaryView').style.display=md==='summary'?'block':'none';
+  renderAll();
+}
+function renderAll(){
+  document.getElementById('chips').style.display=mode==='summary'?'none':'flex';
+  if(mode==='summary'){renderSummary();return;}
+  renderChips();
+  if(mode==='work')renderWork();else renderPres();
+}
+function renderSummary(){
+  const scope=curSumScope();
+  const plabel=scope?scopeLabelOf(scope):'Year '+today.getFullYear();
+  const rows=state.channels.map(ch=>({ch,m:periodMetrics(ch,scope)}));
+  const tot=f=>rows.reduce((a,r)=>a+f(r.m),0);
+  const tSpend=tot(m=>m.spend), tGross=tot(m=>m.gross), tNet=tGross-tSpend;
+  const tROI=tSpend>0?tNet/tSpend*100:0, tMo=tot(m=>m.netMonthly);
+  const profCount=rows.filter(r=>r.m.net>=0).length;
+  const moOptS=(sel,cb)=>`<select class="qsel" onchange="${cb}">${MONTHS.map((mn,i)=>`<option value="${i}"${sel===i?' selected':''}>${mn.slice(0,3)}</option>`).join('')}</select>`;
+  const sel=`<select class="qsel" onchange="setSumPeriod(this.value)">
+    <option value="0"${sumPeriod===0?' selected':''}>Year ${today.getFullYear()}</option>
+    <option value="1"${sumPeriod===1?' selected':''}>Q1 (Jan–Mar)</option>
+    <option value="2"${sumPeriod===2?' selected':''}>Q2 (Apr–Jun)</option>
+    <option value="3"${sumPeriod===3?' selected':''}>Q3 (Jul–Sep)</option>
+    <option value="4"${sumPeriod===4?' selected':''}>Q4 (Oct–Dec)</option>
+    <option value="5"${sumPeriod===5?' selected':''}>Custom range…</option></select>${sumPeriod===5?`<span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;margin-left:8px">${moOptS(sumRangeFrom,"setSumRange('from',this.value)")} to ${moOptS(sumRangeTo,"setSumRange('to',this.value)")}</span>`:''}`;
+  const col=(net)=>net>=0?'var(--green-dk)':'var(--red)';
+  const trows=rows.map(r=>{const m=r.m,prof=m.net>=0;
+    return `<tr>
+      <td class="l" style="font-weight:500">${r.ch.name}</td>
+      <td>${fmt(m.spend)}</td>
+      <td>${fmt(m.gross)}</td>
+      <td style="color:${col(m.net)}">${fmt(m.net)}</td>
+      <td style="color:${col(m.net)}">${Math.round(m.roi)}%</td>
+      <td style="color:${col(m.netMonthly)}">${fmt(m.netMonthly)}</td>
+      <td style="text-align:center"><span class="pill" style="${prof?'background:var(--green);color:var(--green-dk)':'background:var(--red-tint);color:var(--red)'}">${prof?'Profitable':'Not yet'}</span></td>
+    </tr>`;}).join('')||`<tr><td colspan="7" style="text-align:center;color:var(--hint);padding:14px">No channels yet</td></tr>`;
+  const totalRow=rows.length?`<tr style="border-top:2px solid var(--line)">
+      <td class="l" style="font-weight:600">All channels</td>
+      <td style="font-weight:600">${fmt(tSpend)}</td>
+      <td style="font-weight:600">${fmt(tGross)}</td>
+      <td style="font-weight:600;color:${col(tNet)}">${fmt(tNet)}</td>
+      <td style="font-weight:600;color:${col(tNet)}">${Math.round(tROI)}%</td>
+      <td style="font-weight:600;color:${col(tMo)}">${fmt(tMo)}</td>
+      <td></td></tr>`:'';
+  const kc=(l,v,c='')=>`<div class="kpi"><div class="l">${l}</div><div class="v ${c}">${v}</div></div>`;
+  const icard=(id,l,v,c='')=>`<div class="kpi" style="cursor:pointer" onclick="toggleSumCard('${id}')"><div class="l">${l} <i style="font-style:normal;color:var(--hint);font-size:11px">ⓘ</i></div><div class="v ${c}">${v}</div></div>`;
+  const shareRows=(items,total)=>{const s=items.filter(i=>Math.abs(i.val)>0.005).sort((a,b)=>b.val-a.val);return s.length?s.map(i=>`<tr><td class="l" style="color:var(--muted)">${i.name}</td><td style="text-align:right">${fmt(i.val)}</td><td style="text-align:right;color:var(--muted)">${total>0?Math.round(i.val/total*100):0}%</td></tr>`).join(''):'<tr><td colspan="3" style="color:var(--hint)">No data</td></tr>';};
+  let panel='';
+  if(sumCard==='spend')panel=shareRows(rows.map(r=>({name:r.ch.name,val:r.m.spend})),tSpend);
+  else if(sumCard==='earned')panel=shareRows(rows.map(r=>({name:r.ch.name,val:r.m.gross})),tGross);
+  else if(sumCard==='net'){const gain=rows.filter(r=>r.m.net>0).reduce((a,r)=>a+r.m.net,0),loss=rows.filter(r=>r.m.net<0).reduce((a,r)=>a-r.m.net,0);
+    const sr=rows.slice().sort((a,b)=>b.m.net-a.m.net).filter(r=>Math.abs(r.m.net)>0.005);
+    panel=sr.length?sr.map(r=>{const n=r.m.net,pct=n>=0?(gain>0?Math.round(n/gain*100):0):(loss>0?Math.round(-n/loss*100):0);return `<tr><td class="l" style="color:var(--muted)">${r.ch.name}</td><td style="text-align:right;color:${col(n)}">${fmt(n)}</td><td style="text-align:right;color:var(--muted)">${pct}% ${n>=0?'of profit':'of loss'}</td></tr>`;}).join(''):'<tr><td colspan="3" style="color:var(--hint)">No data</td></tr>';}
+  const titles={spend:'Spend by channel — share of total',earned:'Earned by channel — share of total',net:'Net by channel — who drives profit & loss'};
+  const panelHtml=sumCard?`<div class="ltcard" style="margin-top:14px;margin-bottom:0"><div style="font-weight:600;margin-bottom:6px">${titles[sumCard]}</div><table class="ltbreak"><tbody>${panel}</tbody></table></div>`:'';
+  // all-channels deals
+  const allDeals=[]; state.channels.forEach(ch=>ch.deals.forEach(d=>allDeals.push({d,ch})));
+  const adeals=allDeals.filter(x=>dealInPeriod(x.d,scope)).filter(x=>sumDealFilter==='all'||dealStatus(x.d)===sumDealFilter)
+    .sort((a,b)=>{const ca=a.d.create||'',cb=b.d.create||'';if(!ca&&!cb)return 0;if(!ca)return 1;if(!cb)return -1;return ca<cb?-1:ca>cb?1:0;});
+  const dRows=adeals.map(x=>{const d=x.d,st=dealStatus(d),cls=st==='Servicing'?'svc':st==='Closed won'?'won':'chn';
+    return `<tr><td class="l dealname">${d.name}</td><td class="l" style="color:var(--muted)">${x.ch.name}</td><td>${fmt(d.revenue)}</td><td>${fmt(d.vpay)}</td><td>${fmt(mgpOf(d))}</td><td style="font-weight:600">${d.start?fmt(ltScoped(d,scope)):'—'}</td><td style="text-align:center"><span class="pill ${cls}">${st}</span></td></tr>`;}).join('')||`<tr><td colspan="7" style="text-align:center;color:var(--hint);padding:14px">No ${sumDealFilter==='all'?'deals':sumDealFilter+' deals'} in this view.</td></tr>`;
+  const dt2=f=>adeals.reduce((a,x)=>a+f(x.d),0);
+  const dTotal=adeals.length?`<tr style="border-top:2px solid var(--line)"><td class="l" style="font-weight:600">Total${sumDealFilter!=='all'?' ('+sumDealFilter+')':''}</td><td></td><td style="font-weight:600">${fmt(dt2(d=>+d.revenue||0))}</td><td style="font-weight:600">${fmt(dt2(d=>+d.vpay||0))}</td><td style="font-weight:600">${fmt(dt2(d=>mgpOf(d)))}</td><td style="font-weight:600">${fmt(dt2(d=>d.start?ltScoped(d,scope):0))}</td><td></td></tr>`:'';
+  const sdf=`<select class="qsel" onchange="setSumDealFilter(this.value)">${['all','Servicing','Closed won','Churned'].map(o=>`<option value="${o}"${sumDealFilter===o?' selected':''}>${o==='all'?'All statuses':o}</option>`).join('')}</select>`;
+  document.getElementById('summaryView').innerHTML=`
+    <div class="card">
+      <div class="sec-h"><h2>All channels — ${plabel}</h2>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${sel}</div></div>
+      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+        ${icard('spend','Total spend',fmt(tSpend))}
+        ${icard('earned','Total earned',fmt(tGross))}
+        ${icard('net',tNet>=0?'Net profit':'Net loss',fmt(tNet),tNet>=0?'pos':'neg')}
+        ${kc('Blended ROI',Math.round(tROI)+'%',tNet>=0?'pos':'neg')}
+      </div>
+      ${panelHtml}
+      <div style="font-size:12.5px;color:var(--muted);margin-top:12px">${profCount} of ${rows.length} channel${rows.length===1?'':'s'} profitable${scope?' ('+plabel+')':''}.</div>
+    </div>
+    <div class="card">
+      <div class="sec-h"><h2>Per channel</h2></div>
+      <table>
+        <tr><th class="l">Channel</th><th>Spend</th><th>Earned</th><th>Net</th><th>ROI</th><th>Net/mo</th><th style="text-align:center">Status</th></tr>
+        ${trows}${totalRow}
+      </table>
+    </div>
+    <div class="card">
+      <div class="sec-h"><h2>All deals — ${plabel}</h2><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${sdf}</div></div>
+      <table>
+        <tr><th class="l">Deal</th><th class="l">Channel</th><th>Revenue</th><th>Vendor pay</th><th>MGP/mo</th><th>Earned</th><th style="text-align:center">Status</th></tr>
+        ${dRows}${dTotal}
+      </table>
+    </div>`;
+}
+renderAll();
+
+const NLS='cleango_mroi_notes';
+function toggleNotes(){document.getElementById('mnote-panel').classList.toggle('open');}
+function saveNotes(){
+  localStorage.setItem(NLS,document.getElementById('mnote-area').value);
+  const s=document.getElementById('mnote-saved');s.textContent='Saved ✓';
+  clearTimeout(window._nt);window._nt=setTimeout(()=>s.textContent='Saved automatically',1200);
+}
+(function(){const v=localStorage.getItem(NLS);if(v!=null)document.getElementById('mnote-area').value=v;})();
+</script>
+</body>
+</html>
