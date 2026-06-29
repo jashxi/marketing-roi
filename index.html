@@ -152,7 +152,7 @@
 </div>
 <script>
   document.documentElement.setAttribute('data-theme', localStorage.getItem('cleango_mroi_theme')||'light');
-  const GATECODE='cleango2026';
+  const GATECODE='CGmarketing';
   function tryGate(){var v=document.getElementById('gateInput').value;if(v===GATECODE){localStorage.setItem('cleango_mroi_unlocked','1');document.getElementById('gate').style.display='none';}else{document.getElementById('gateErr').textContent='Wrong passcode — try again';document.getElementById('gateInput').value='';}}
   if(localStorage.getItem('cleango_mroi_unlocked')==='1'){document.getElementById('gate').style.display='none';}
 </script>
