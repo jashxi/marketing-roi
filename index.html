@@ -136,6 +136,8 @@
   .pres-chip{display:inline-flex;align-items:center;gap:6px;margin-top:9px;font-size:13.5px;padding:6px 15px;border-radius:24px;background:var(--green-tint);color:var(--green-dk);font-weight:600;}
 
   .foot{text-align:center;font-size:11.5px;color:var(--hint);margin-top:8px;}
+  .foot-link{background:none;border:none;color:var(--muted);cursor:pointer;font-family:inherit;font-size:12px;padding:4px 6px;border-radius:6px;}
+  .foot-link:hover{color:var(--jet);background:var(--alabaster);}
   @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr);}.cols{grid-template-columns:1fr;}.colsep{border-left:none;padding-left:0;}.fgrid{grid-template-columns:repeat(2,1fr);}.money{flex-direction:column;}.mbox.spend{border-radius:var(--radius) var(--radius) 0 0;}.mbox.net{border-radius:0 0 var(--radius) var(--radius);}.mop{justify-content:center;padding:6px 0;}}
 </style>
 </head>
@@ -181,6 +183,13 @@
   <div id="workView" style="display:none;"></div>
   <div id="presView"></div>
   <div id="summaryView" style="display:none;"></div>
+
+  <div class="foot" style="display:flex;gap:12px;justify-content:center;align-items:center;margin-top:16px">
+    <button onclick="exportData()" class="foot-link">⤓ Backup data</button>
+    <span style="color:var(--hint)">·</span>
+    <button onclick="importData()" class="foot-link">⤒ Restore</button>
+    <input type="file" id="restoreFile" accept="application/json,.json" style="display:none" onchange="doImport(event)">
+  </div>
 
 </div>
 
@@ -233,22 +242,8 @@ function getReview(ch){return ch.review||{tier:'',note:''};}
 function reviewBadge(ch){const t=TIERS[getReview(ch).tier];if(!t)return '';return `<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 11px;border-radius:20px;background:${tierBg(t)};color:${tierFg(t)}"><span style="width:8px;height:8px;border-radius:50%;background:${t.dot}"></span>${t.label}</span>`;}
 
 function seed(){
-  return {active:0, channels:[
-    {name:'Cohesive', period:'Q1 2026',
-     months:[
-       {month:'January',spend:740,leads:3,qualified:3,won:1},
-       {month:'February',spend:0,leads:1,qualified:1,won:0},
-       {month:'March',spend:0,leads:1,qualified:1,won:2},
-     ],
-     deals:[
-       {name:'Isalis',revenue:1067,vpay:850,mgp:400,create:'2026-01-15',start:'2026-02-03',end:''},
-       {name:'African Services',revenue:930,vpay:680,mgp:250,create:'2026-01-07',start:'2026-03-09',end:''},
-       {name:'Franck MD',revenue:620,vpay:400,mgp:220,create:'2026-03-11',start:'2026-03-20',end:''},
-       {name:'Newco',revenue:500,vpay:320,mgp:180,create:'2026-03-25',start:'',end:''},
-     ]},
-    {name:'Bark', period:'Q1 2026', months:[{month:'January',spend:0,leads:0,qualified:0,won:0}], deals:[]},
-    {name:'Referral', period:'Q1 2026', months:[{month:'January',spend:0,leads:0,qualified:0,won:0}], deals:[]},
-  ]};
+  const blank=name=>({name,period:'Q1 '+today.getFullYear(),months:[{month:'January',spend:0,leads:0,qualified:0,won:0}],deals:[],review:{tier:'',note:''}});
+  return {active:0, channels:['Cohesive','Bark','Expertise','Stryker'].map(blank)};
 }
 let state=load();
 function load(){try{const s=JSON.parse(localStorage.getItem(LS));return s&&s.channels?s:seed();}catch(e){return seed();}}
@@ -788,6 +783,27 @@ const SUN='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="c
 const MOON='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>';
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('cleango_mroi_theme',t);const b=document.getElementById('themeBtn');if(b)b.innerHTML=t==='dark'?SUN:MOON;}
 function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');renderAll();}
+function exportData(){
+  const stamp=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='cleango-roi-backup-'+stamp+'.json'; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importData(){document.getElementById('restoreFile').click();}
+function doImport(e){
+  const f=e.target.files[0]; e.target.value=''; if(!f)return;
+  const r=new FileReader();
+  r.onload=function(){
+    try{const d=JSON.parse(r.result);
+      if(!d||!d.channels){alert('That doesn’t look like a backup file.');return;}
+      if(!confirm('Replace ALL current data with this backup? This cannot be undone.'))return;
+      state=d; if(state.active>=state.channels.length)state.active=0; openLt=-1;
+      save(); renderAll(); alert('Backup restored ✓');
+    }catch(err){alert('Could not read that file.');}
+  };
+  r.readAsText(f);
+}
 applyTheme(localStorage.getItem('cleango_mroi_theme')||'light');
 function renderAll(){
   document.getElementById('chips').style.display=mode==='summary'?'none':'flex';
